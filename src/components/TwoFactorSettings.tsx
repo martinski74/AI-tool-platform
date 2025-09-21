@@ -139,12 +139,12 @@ const TwoFactorSettings: React.FC = () => {
 
         {!profile.two_factor_enabled && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h5 className="font-medium text-blue-900 mb-2">Как работи двуфакторната автентикация?</h5>
+            <h5 className="font-medium text-blue-900 mb-2">Как работи двуфакторната автентикация?(Демо цели)</h5>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• При всяко влизане ще въвеждате email и парола както обикновено</li>
-              <li>• След това ще получите 6-цифрен код на email-а си</li>
+              <li>• След това ще получите 6-цифрен код на email-а си, в случая в конзолата на браузъра Ви</li>
               <li>• Въведете кода за да завършите влизането</li>
-              <li>• Това осигурява допълнителна защита на акаунта ви</li>
+              <li>• Вреална среда това осигурява допълнителна защита на акаунта ви</li>
             </ul>
           </div>
         )}

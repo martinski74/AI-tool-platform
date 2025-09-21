@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!supabase) return
 
     try {
-      console.log('🔍 Fetching profile for user ID:', userId)
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log('📝 Profile not found, will be created by trigger on next login')
         }
       } else {
-        console.log('✅ Profile fetched successfully:', data)
+        
         setProfile(data)
       }
     } catch (error) {
