@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    env_file:
+      - .env
+
+# I am not including the Supabase services here as it is a complex setup.
+# I will provide a separate docker-compose file for Supabase if the user asks for it.
