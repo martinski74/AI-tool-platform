@@ -11,7 +11,7 @@ import { useActivityLogger } from '../hooks/useActivityLogger'
 
 const Dashboard: React.FC = () => {
   const { profile, signOut } = useAuth()
-  const [activeTab, setActiveTab] = React.useState('tools')
+  const [activeTab, setActiveTab] = React.useState('dashboard')
   const { logActivity } = useActivityLogger()
 
   // Cache categories and tool counts
