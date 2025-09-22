@@ -2,6 +2,7 @@ import React from 'react'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import LoginForm from './components/LoginForm'
 import Dashboard from './components/Dashboard'
+import { Toaster } from 'react-hot-toast'
 
 function AppContent() {
   const { session, loading } = useAuth()
@@ -23,6 +24,27 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          // Define default options
+          className: '',
+          duration: 5000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 3000,
+            theme: {
+              primary: 'green',
+              secondary: 'black',
+            },
+          },
+        }}
+      />
       <AppContent />
     </AuthProvider>
   )

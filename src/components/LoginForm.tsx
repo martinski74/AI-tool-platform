@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { LogIn, Loader2, Users, Bot } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useToaster } from '../hooks/useToaster'
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -9,17 +10,14 @@ const LoginForm: React.FC = () => {
   const [twoFactorCode, setTwoFactorCode] = useState('')
   const [showTwoFactor, setShowTwoFactor] = useState(false)
   const [twoFactorEmail, setTwoFactorEmail] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const { signIn, verifyTwoFactor, resendTwoFactorCode, loading } = useAuth()
+  const { showSuccessToast, showErrorToast } = useToaster()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-    setSuccess('')
 
     if (!supabase) {
-      setError('Системата не е конфигурирана. Моля, свържете се с администратор.')
+      showErrorToast('Системата не е конфигурирана. Моля, свържете се с администратор.')
       return
     }
     
@@ -28,14 +26,15 @@ const LoginForm: React.FC = () => {
       if (error.message === 'TWO_FACTOR_REQUIRED') {
         setTwoFactorEmail(email)
         setShowTwoFactor(true)
-        setSuccess('Код за потвърждение е изпратен на вашия email')
+        showSuccessToast('Код за потвърждение е изпратен на вашия email')
         setEmail('')
         setPassword('')
       } else {
-        setError('Грешен email или парола')
+        showErrorToast('Грешен email или парола')
       }
     } else {
       // Successful login without 2FA
+      showSuccessToast('Успешен вход в системата')
       setEmail('')
       setPassword('')
     }
@@ -43,24 +42,19 @@ const LoginForm: React.FC = () => {
 
   const handleTwoFactorSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-    setSuccess('')
 
     const { error } = await verifyTwoFactor(twoFactorEmail, twoFactorCode)
     if (error) {
-      setError('Невалиден код за потвърждение')
+      showErrorToast('Невалиден код за потвърждение')
     }
   }
 
   const handleResendCode = async () => {
-    setError('')
-    setSuccess('')
-    
     const { error } = await resendTwoFactorCode(twoFactorEmail)
     if (error) {
-      setError('Грешка при изпращане на кода')
+      showErrorToast('Грешка при изпращане на кода')
     } else {
-      setSuccess('Нов код е изпратен на вашия email')
+      showSuccessToast('Нов код е изпратен на вашия email')
     }
   }
 
@@ -118,18 +112,6 @@ const LoginForm: React.FC = () => {
                 />
               </div>
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
-
-              {success && (
-                <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
-                  {success}
-                </div>
-              )}
-
               <button
                 type="submit"
                 disabled={loading}
@@ -174,18 +156,6 @@ const LoginForm: React.FC = () => {
                 </p>
               </div>
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
-
-              {success && (
-                <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
-                  {success}
-                </div>
-              )}
-
               <button
                 type="submit"
                 disabled={loading || twoFactorCode.length !== 6}
@@ -214,8 +184,6 @@ const LoginForm: React.FC = () => {
                     setShowTwoFactor(false)
                     setTwoFactorCode('')
                     setTwoFactorEmail('')
-                    setError('')
-                    setSuccess('')
                   }}
                   className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >

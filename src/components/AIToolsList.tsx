@@ -8,11 +8,13 @@ import { useActivityLogger } from '../hooks/useActivityLogger'
 import { useCacheManager } from '../hooks/useCache'
 import ToolRating from './ToolRating'
 import ToolComments from './ToolComments'
+import { useToaster } from '../hooks/useToaster'
 
 const AIToolsList: React.FC = () => {
   const { user, profile } = useAuth()
   const { logActivity } = useActivityLogger()
   const { invalidatePattern } = useCacheManager()
+  const { showSuccessToast, showErrorToast } = useToaster()
   const [tools, setTools] = useState<AITool[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -69,7 +71,7 @@ const AIToolsList: React.FC = () => {
       const { data, error } = await query
 
       if (error) {
-        console.error('Error fetching tools:', error)
+        showErrorToast('Грешка при зареждане на инструментите')
         setTools([])
         return
       }
@@ -127,7 +129,7 @@ const AIToolsList: React.FC = () => {
       setTools(toolsWithStats)
       
     } catch (error) {
-      console.error('Error in fetchTools:', error)
+      showErrorToast('Грешка при зареждане на инструментите')
       setTools([])
     } finally {
       setLoading(false)
@@ -164,20 +166,10 @@ const AIToolsList: React.FC = () => {
       invalidatePattern('tools')
       invalidatePattern('dashboard-stats')
       
+      showSuccessToast('Инструментът е изтрит успешно')
       fetchTools()
     } catch (error) {
-      console.error('Error deleting tool:', error)
-      // Log error activity
-      await logActivity({
-        action: 'delete_tool',
-        resourceType: 'ai_tool',
-        resourceId: toolId,
-        details: { 
-          tool_name: tool?.name,
-          error: error.message,
-          success: false
-        }
-      })
+      showErrorToast('Грешка при изтриване на инструмента')
     }
   }
 

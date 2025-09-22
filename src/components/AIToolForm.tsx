@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useActivityLogger } from '../hooks/useActivityLogger'
 import { useCacheManager } from '../hooks/useCache'
 import { useCache } from '../hooks/useCache'
+import { useToaster } from '../hooks/useToaster'
 
 interface AIToolFormProps {
   tool?: AITool
@@ -16,6 +17,7 @@ const AIToolForm: React.FC<AIToolFormProps> = ({ tool, onClose, onSave }) => {
   const { user } = useAuth()
   const { logActivity } = useActivityLogger()
   const { invalidatePattern } = useCacheManager()
+  const { showSuccessToast, showErrorToast } = useToaster()
   const [loading, setLoading] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
   const [newCategoryName, setNewCategoryName] = useState('')
@@ -47,7 +49,7 @@ const AIToolForm: React.FC<AIToolFormProps> = ({ tool, onClose, onSave }) => {
       .order('name')
 
     if (error) {
-      console.error('Error fetching categories:', error)
+      showErrorToast('Грешка при зареждане на категориите')
     } else {
       setCategories(data || [])
     }
@@ -64,12 +66,13 @@ const AIToolForm: React.FC<AIToolFormProps> = ({ tool, onClose, onSave }) => {
       .single()
 
     if (error) {
-      console.error('Error creating category:', error)
+      showErrorToast('Грешка при създаване на категория')
     } else {
       setCategories([...categories, data])
       setFormData({ ...formData, category_id: data.id })
       setNewCategoryName('')
       setShowNewCategory(false)
+      showSuccessToast('Категорията е създадена успешно')
     }
     setLoading(false)
   }
@@ -129,6 +132,7 @@ const AIToolForm: React.FC<AIToolFormProps> = ({ tool, onClose, onSave }) => {
 
         if (error) throw error
         toolData = data
+        showSuccessToast('Инструментът е редактиран успешно')
         
       } else {
         // Create new tool
@@ -152,6 +156,7 @@ const AIToolForm: React.FC<AIToolFormProps> = ({ tool, onClose, onSave }) => {
 
         if (error) throw error
         toolData = data
+        showSuccessToast('Инструментът е създаден успешно')
       }
 
       // Update tool roles
@@ -209,18 +214,7 @@ const AIToolForm: React.FC<AIToolFormProps> = ({ tool, onClose, onSave }) => {
       onSave()
       onClose()
     } catch (error) {
-      console.error('Error saving tool:', error)
-      // Log error activity
-      await logActivity({
-        action: tool ? 'update_tool' : 'create_tool',
-        resourceType: 'ai_tool',
-        resourceId: tool?.id,
-        details: { 
-          error: error.message,
-          name: formData.name,
-          success: false
-        }
-      })
+      showErrorToast('Грешка при запис на инструмента')
     } finally {
       setLoading(false)
     }
