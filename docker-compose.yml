@@ -10,5 +10,3 @@ services:
     env_file:
       - .env
 
-# I am not including the Supabase services here as it is a complex setup.
-# I will provide a separate docker-compose file for Supabase if the user asks for it.

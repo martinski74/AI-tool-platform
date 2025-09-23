@@ -61,7 +61,7 @@
 #### 1. Клониране на проекта
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/martinski74/AI-tool-platform.git
 cd ai-tools-platform
 ```
 
